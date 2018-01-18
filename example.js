@@ -1,19 +1,17 @@
 #!/usr/bin/env node
 
-var connect = require("connect"),
-    connect_saml2 = require("./"),
-    http = require("http");
+var fs = require('fs');
+var express = require("express");
+var morgan = require("morgan");
+var cookieParser = require("cookie-parser");
+var session = require("express-session");
+var express_saml2 = require("./");
 
-var app = connect();
+var app = express();
 
-app.use(connect.logger());
-
-// connect's cookieParser and session are required for the *default* relayState
-// and assertion storage strategies. They are *not* required if these mechanisms
-// are overridden.
-
-app.use(connect.cookieParser());
-app.use(connect.session({secret: "secret"}));
+app.use(morgan('combined'));
+app.use(cookieParser());
+app.use(session({secret: "secret"}));
 
 app.use(connect_saml2({
   ensureAuthentication: true,
@@ -30,8 +28,6 @@ app.use(function(req, res, next) {
   return res.end(JSON.stringify(req.user, null, 2));
 });
 
-var server = http.createServer(app);
-
-server.listen(3000, function() {
+app.listen(3000, function() {
   console.log("listening");
 });

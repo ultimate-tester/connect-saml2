@@ -1,15 +1,15 @@
-connect-saml2
+express-saml2
 =============
 
-SAML2 authentication for connect
+SAML2 authentication for express
 
 Overview
 --------
 
-This connect middleware allows an application to authenticate users via a SAML2
+This express middleware allows an application to authenticate users via a SAML2
 gateway, and access the attributes asserted by the gateway pertaining to those
 users. It doesn't require (and probably doesn't play nicely with) any other
-authentication framework. Currently connect ~2.0.0 is supported. As long as the
+authentication framework. Currently express ~4.0.0 is supported. As long as the
 `urlencoded` middleware doesn't go away, things should keep working for quite
 some time.
 
@@ -17,26 +17,14 @@ Usage
 -----
 
 ```js
-var connect = require("connect"),
-    connect_saml2 = require("connect-saml2");
-
-var app = connect();
-
-// required only for the default user/session logic - see below for details
-app.use(connect.cookieParser());
-app.use(connect.session({secret: "i am a secret lol"}));
-
 app.use(connect_saml2({
-  // force users to authenticate before they can pass through this middleware
   ensureAuthentication: true,
-  // this is information about your SAML gateway
   idp: {
-    singleSignOnService: "http://www.example.com/sso",
-    fingerprint: "01:23:45:...",
+    singleSignOnService: "https://openidp.feide.no/simplesaml/saml2/idp/SSOService.php",
+    fingerprint: "C9:ED:4D:FB:07:CA:F1:3F:C2:1E:0F:EC:15:72:04:7E:B8:A7:A4:CB",
   },
-  // this is information about your application
   sp: {
-    entityId: "my-application",
+    entityId: "fknsrsbiz-testing",
   },
 }));
 
@@ -59,7 +47,7 @@ stack, after your header parsing and session stuff but before your body parsing.
 This is so that it can parse urlencoded requests, and so that it can stop users
 from hitting your main application logic (if you choose to have it do so.)
 
-Upon a request entering the middleware, `connect_saml2` will check to see if
+Upon a request entering the middleware, `express_saml2` will check to see if
 there's a currently-valid SAML context that it knows about. It will, by default,
 do this by looking in the user's session. If there is a valid context, a few
 properties of `req` will be populated: `samlAssertion`, `samlAssertionXml`, and
@@ -139,7 +127,7 @@ messages.
 * Required: no
 * Default: `false`
 
-Tells `connect_saml2` whether or not to force all users through the
+Tells `express_saml2` whether or not to force all users through the
 authentication process before passing through to the next handler.
 
 ### mountPrefix

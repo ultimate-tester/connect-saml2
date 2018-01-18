@@ -1,5 +1,5 @@
 var c14n = require("xml-c14n")(),
-    connect = require("connect"),
+    express = require("express"),
     randomId = require("proquint-random-id"),
     saml2 = require("saml2"),
     url = require("url"),
@@ -12,7 +12,7 @@ var User = require("./lib/user");
 var connect_saml2 = module.exports = function connect_saml2(options) {
   options = options || {};
 
-  var urlencoded = connect.urlencoded(),
+  var urlencoded = express.urlencoded(),
       canonicaliser = c14n.createCanonicaliser("http://www.w3.org/2001/10/xml-exc-c14n#");
 
   if (!options.idp) {
